@@ -1,0 +1,52 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+#root {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid black;
+    border-radius: 10px;
+
+    width: 40%;
+    margin-left: 30%;
+    margin-top: 12.5%;
+    height: 40%;
+}
+
+#header {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+    border-bottom: 1px solid black;
+}
+
+#header div {
+    width: 50%;
+}
+
+#form {
+    margin-top: 7%;
+}
+
+#form div {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+#username, #password {
+    width: 30%;
+    margin-left: 15%;
+
+    border: none;
+    border-radius: 1px;
+    height: 25px;
+}
+
+#login {
+    width: 20%;
+    margin-left: 40%;
+}

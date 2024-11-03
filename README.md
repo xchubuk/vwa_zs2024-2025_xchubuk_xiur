@@ -1,5 +1,5 @@
 
-# Zadání 3: Webová aplikace pro půjčování kol a správu bikeparku
+# Zadání 3: Webová aplikace pro půjčování kol a správu bikeparku.
 
 ## Popis projektu
 Cílem je vytvoření webové aplikace, která umožní návštěvníkům bikeparku půjčovat si kola, evidovat jejich stav, spravovat opravy a sledovat další související operace. 

@@ -1,9 +1,71 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0" version="24.8.3">
   <diagram name="Страница — 1" id="Fk7fVdzLYf-3cynOzU-B">
-    <mxGraphModel>
+    <mxGraphModel dx="1050" dy="529" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-1" value="&lt;p class=&quot;MsoNormal&quot;&gt;&lt;span style=&quot;mso-spacerun:&#39;yes&#39;;font-family:&#39;Times New Roman&#39;;mso-fareast-font-family:宋体;&lt;br/&gt;font-size:10.5000pt;mso-font-kerning:1.0000pt;&quot;&gt;Zákazník&lt;/span&gt;&lt;span style=&quot;mso-spacerun:&#39;yes&#39;;font-family:&#39;Times New Roman&#39;;mso-fareast-font-family:宋体;&lt;br/&gt;font-size:10.5000pt;mso-font-kerning:1.0000pt;&quot;&gt; &lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;style&gt;@font-face{&lt;br/&gt;font-family:&quot;Times New Roman&quot;;&lt;br/&gt;}@font-face{&lt;br/&gt;font-family:&quot;宋体&quot;;&lt;br/&gt;}@font-face{&lt;br/&gt;font-family:&quot;SimSun&quot;;&lt;br/&gt;}@font-face{&lt;br/&gt;font-family:&quot;Cambria&quot;;&lt;br/&gt;}p.MsoNormal{&lt;br/&gt;mso-style-name:Normal;&lt;br/&gt;mso-style-parent:&quot;&quot;;&lt;br/&gt;margin:0pt;&lt;br/&gt;margin-bottom:.0001pt;&lt;br/&gt;text-align:justify;&lt;br/&gt;text-justify:inter-ideograph;&lt;br/&gt;font-family:&#39;Times New Roman&#39;;&lt;br/&gt;mso-fareast-font-family:宋体;&lt;br/&gt;font-size:10.5000pt;&lt;br/&gt;mso-font-kerning:1.0000pt;&lt;br/&gt;}span.msoIns{&lt;br/&gt;mso-style-type:export-only;&lt;br/&gt;mso-style-name:&quot;&quot;;&lt;br/&gt;text-decoration:underline;&lt;br/&gt;text-underline:single;&lt;br/&gt;color:blue;&lt;br/&gt;}span.msoDel{&lt;br/&gt;mso-style-type:export-only;&lt;br/&gt;mso-style-name:&quot;&quot;;&lt;br/&gt;text-decoration:line-through;&lt;br/&gt;color:red;&lt;br/&gt;}div.Section0{page:Section0;}&lt;/style&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="250" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-2" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="10" y="70" width="404" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-3" value="Rezervace kola" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="157" y="40" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-4" value="Prohlížení dostupných kol" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="100" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-5" value="Výběr kola" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="220" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-6" value="Výběr způsobu platby" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="330" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-7" value="Potvrzení rezervace" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="450" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-8" value="Navrh jineho kola" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="360" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="2coAtKDLJkm-G2zBh2h6-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="270" as="sourcePoint" />
+            <mxPoint x="400" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-10" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="2coAtKDLJkm-G2zBh2h6-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="270" as="sourcePoint" />
+            <mxPoint x="400" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-11" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="2coAtKDLJkm-G2zBh2h6-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="270" as="sourcePoint" />
+            <mxPoint x="400" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-12" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.993;entryY=0.6;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="2coAtKDLJkm-G2zBh2h6-1" target="2coAtKDLJkm-G2zBh2h6-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="350" y="340" as="sourcePoint" />
+            <mxPoint x="400" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-13" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="2coAtKDLJkm-G2zBh2h6-7" target="2coAtKDLJkm-G2zBh2h6-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="70" y="530" as="sourcePoint" />
+            <mxPoint x="120" y="480" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="105" y="485" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2coAtKDLJkm-G2zBh2h6-15" value="Pokud kolo není dostupné" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="2coAtKDLJkm-G2zBh2h6-13">
+          <mxGeometry x="0.175" y="1" relative="1" as="geometry">
+            <mxPoint y="14" as="offset" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

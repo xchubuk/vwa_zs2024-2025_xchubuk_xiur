@@ -108,7 +108,9 @@ async function handleRegister(event) {
         const userData = {
             name: nameField.value,
             email: emailField.value,
-            password: passwordField.value
+            password: passwordField.value,
+            role: "client",
+            registrationTime: new Date().toISOString()
         }
         
         const response = await fetch('/register', {

@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
+URL = os.getenv("URL")
+PORT = os.getenv("PORT")
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -23,7 +25,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            registrationTime TEXT NOT NULL
         )
     ''')
     conn.commit()
@@ -50,6 +53,8 @@ def handle_register():
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
+    registration_time = data.get('registrationTime')
+    role = data.get('role')
 
     encrypted_email = hashlib.sha256(email.encode()).hexdigest()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -57,8 +62,8 @@ def handle_register():
     try:
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-                       (name, encrypted_email, hashed_password))
+        cursor.execute('INSERT INTO users (name, email, password, registrationTime) VALUES (?, ?, ?)',
+                       (name, encrypted_email, hashed_password, registration_time))
         conn.commit()
         conn.close()
     except sqlite3.IntegrityError:
@@ -107,4 +112,4 @@ def logout():
     return response
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8192, debug=True)
+    app.run(host=URL, port=PORT, debug=True)

@@ -21,7 +21,7 @@ function switchTab(tab) {
     }
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const emailField = document.getElementById('loginEmail');
     const passwordField = document.getElementById('loginPassword');
@@ -47,11 +47,25 @@ function handleLogin(event) {
             password: passwordField.value
         }
 
-        //fetch
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(userData)
+        }).then(r => r.json());
+
+        if (response.success) {
+            location.href = response.redirect_url;
+        } else {
+            alert(response.message);
+        }
+
     } else return;
 }
 
-function handleRegister(event) {
+async function handleRegister(event) {
     event.preventDefault();
     const nameField = document.getElementById('registerName');
     const emailField = document.getElementById('registerEmail');
@@ -97,12 +111,23 @@ function handleRegister(event) {
             password: passwordField.value
         }
         
-        fetch('/register', {
+        const response = await fetch('/register', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'X-CSRFToken': getCsrfToken()
             },
             body: JSON.stringify(userData)
-        });
+        }).then(r => r.json());
+
+        if (response.success) {
+            location.href = response.redirect_url;
+        } else {
+            alert(response.message);
+        }
     } else return;
+}
+
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }

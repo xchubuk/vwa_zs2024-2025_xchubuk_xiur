@@ -1,52 +1,111 @@
 * {
-    padding: 0;
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#root {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 1px solid black;
-    border-radius: 10px;
-
-    width: 40%;
-    margin-left: 30%;
-    margin-top: 12.5%;
-    height: 40%;
-}
-
-#header {
+body {
+    min-height: 100vh;
     display: flex;
-    width: 100%;
     justify-content: center;
-
-    border-bottom: 1px solid black;
+    align-items: center;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
 }
 
-#header div {
-    width: 50%;
+.container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 90%;
 }
 
-#form {
-    margin-top: 7%;
+.tabs {
+    display: flex;
+    margin-bottom: 2rem;
 }
 
-#form div {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-#username, #password {
-    width: 30%;
-    margin-left: 15%;
-
+.tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
     border: none;
-    border-radius: 1px;
-    height: 25px;
+    color: #80deea;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-#login {
-    width: 20%;
-    margin-left: 40%;
+.tab.active {
+    color: #00acc1;
+    border-bottom: 3px solid #00acc1;
+}
+
+.form-container form {
+    display: none;
+}
+
+.form-container form.active {
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #546e7a;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0f7fa;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #4dd0e1;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background: #4dd0e1;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background: #00acc1;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #00acc1;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #ff5252;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
 }

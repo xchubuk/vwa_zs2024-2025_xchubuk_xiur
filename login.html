@@ -1,37 +1,59 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <link rel="stylesheet" href="src/login_page/style.css">
-        <script src="src/login_page/script.js"></script>
-
-        <title>KoloOnline Login Page</title>
-    </head>
-    <body>
-        <div id="root">
-            <div id="header">
-                <div>
-                    <img src="img/test.png" alt="kolo">
-                </div>
-                <div>
-                    <h1>KoloOnline</h1>
-                </div>
-            </div>
-            <div id="form">
-                <div>
-                    <label>Your username or email: </label>
-                    <input type="text" id="username" placeholder="username">
-                </div>
-                <div>
-                    <label>Your password: </label>
-                    <input type="password" id="password" placeholder="password">
-                </div>
-                <div>
-                    <button id="login" onclick="login()">login</button>
-                </div>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoloOnline - Login</title>
+    <link rel="stylesheet" href="src/login_page/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">KoloOnline</div>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
         </div>
-    </body>
+        <div class="form-container">
+            <form id="loginForm" class="active" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="input-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required>
+                    <div class="error-message" id="registerNameError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="src/login_page/script.js"></script>
+</body>
 </html>

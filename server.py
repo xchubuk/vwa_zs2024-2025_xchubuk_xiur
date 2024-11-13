@@ -1,15 +1,35 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response
 from flask_wtf import CSRFProtect
 import bcrypt
-import uuid
 import hashlib
+import sqlite3
+import uuid
+import os
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = SECRET_KEY
 csrf = CSRFProtect(app)
 
-# Mock database of users (replace this with an actual database in production)
-users = {}
+def init_db():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 def generate_session_token(email):
     """Generate a secure session token."""
@@ -31,18 +51,24 @@ def handle_register():
     email = data.get('email')
     password = data.get('password')
 
-    # Check if the email is already registered
-    if email in users:
-        return jsonify({"message": "Email is already registered"}), 400
-
-    # Hash the password before storing it
+    encrypted_email = hashlib.sha256(email.encode()).hexdigest()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-    # Register the user with hashed password
-    users[email] = {'name': name, 'password': hashed_password}
+    try:
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+                       (name, encrypted_email, hashed_password))
+        conn.commit()
+        conn.close()
+    except sqlite3.IntegrityError:
+        return jsonify({"message": "Email is already registered"}), 400
+
     session_token = generate_session_token(email)
-    response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True }))
-    response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict')
+    response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True}))
+
+    expires_at = datetime.utcnow() + timedelta(hours=24)
+    response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict', expires=expires_at)
     return response
 
 @app.route('/login', methods=['POST'])
@@ -52,11 +78,20 @@ def handle_login():
     email = data.get('email')
     password = data.get('password')
 
-    user = users.get(email)
-    if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
+    encrypted_email = hashlib.sha256(email.encode()).hexdigest()
+
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT password FROM users WHERE email = ?', (encrypted_email,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row and bcrypt.checkpw(password.encode('utf-8'), row[0]):
         session_token = generate_session_token(email)
-        response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True }))
-        response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict')
+        response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True}))
+
+        expires_at = datetime.utcnow() + timedelta(hours=24)
+        response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict', expires=expires_at)
         return response
     else:
         return jsonify({"message": "Invalid credentials"}), 401

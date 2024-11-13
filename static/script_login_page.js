@@ -97,6 +97,12 @@ function handleRegister(event) {
             password: passwordField.value
         }
         
-        //fetch
+        fetch('/register', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        });
     } else return;
 }

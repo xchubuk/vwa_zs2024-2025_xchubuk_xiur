@@ -38,7 +38,7 @@ function addUser(event) {
     .then(response => {
         if (response.ok) {
             closeModal('addUserModal');
-            fetchAdminUsers(); // Reload user data after adding
+            fetchAdminUsers(); 
         } else {
             throw new Error('Failed to add user');
         }
@@ -237,7 +237,7 @@ function updateBikeStatus(bicycleId, newStatus) {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify({ status: parseInt(newStatus) })  // Ensure integer
+        body: JSON.stringify({ status: parseInt(newStatus) })  
     })
     .then(response => {
         if (response.ok) {
@@ -317,7 +317,7 @@ function removeBicycle(bicycleId) {
         })
         .then(response => {
             if (response.ok) {
-                fetchAdminBicycles(); // Reload table data after removal
+                fetchAdminBicycles(); 
             } else {
                 throw new Error('Failed to remove bicycle');
             }
@@ -326,9 +326,34 @@ function removeBicycle(bicycleId) {
     }
 }
 
-function generateReport() {
-    alert('Generating report...');
-    // Add report generation logic
+function getCsrfToken() {
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    return csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : null;
+}
+
+async function generateReport() {
+    try {
+        const response = await fetch('/api/admin/generate_report', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCsrfToken()
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate report');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'bicycle_report.xlsx';
+        link.click();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error generating report:', error);
+    }
 }
 
 window.onload = function() {

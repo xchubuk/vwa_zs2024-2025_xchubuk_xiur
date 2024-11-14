@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session, abort
+from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session, abort, send_file
 from flask_wtf import CSRFProtect
+from openpyxl import Workbook
+import tempfile
 import bcrypt
 import hashlib
 import sqlite3
@@ -116,15 +118,15 @@ def get_bicycles():
 def get_admin_bicycles():
     role = fetch_user_role_from_db()
     
-    # Allow access to both admins and managers
+    
     if role not in ['admin', 'manager']:
-        return abort(403)  # Restrict access if the user is neither an admin nor a manager
+        return abort(403)  
 
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
 
-        # Fetch all bicycles with additional details and their latest status
+        
         cursor.execute('''
             SELECT b.bicycle_id, b.inventory_number, b.type, t.name AS type_name, 
                    t.description, t.purchase_date, t.type AS bicycle_type, bs.inspection_date, 
@@ -500,6 +502,72 @@ def add_user():
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to add user"}), 500
+    
+@app.route('/api/admin/generate_report', methods=['GET'])
+def generate_report():
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT b.inventory_number, t.name AS type_name, bs.status, bs.inspection_date,
+                   r.start_date, r.end_date, r.user_id, tr.payment_method, tr.payment_date, tr.payment_status
+            FROM bicycles b
+            JOIN bicycle_types t ON b.type_id = t.type_id
+            LEFT JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
+            LEFT JOIN rentals r ON b.bicycle_id = r.bicycle_id
+            LEFT JOIN transactions tr ON r.rental_id = tr.rental_id
+            WHERE bs.status_id = (SELECT MAX(status_id) FROM bicycle_status WHERE bicycle_id = b.bicycle_id)
+            ORDER BY b.inventory_number, r.start_date DESC
+        ''')
+        report_data = cursor.fetchall()
+        conn.close()
+
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Bicycle Report"
+
+        headers = ["Inventory Number", "Type", "Status", "Last Inspection Date",
+                   "Rental Start Date", "Rental End Date", "User ID",
+                   "Payment Method", "Payment Date", "Payment Status"]
+        sheet.append(headers)
+
+        status_mapping = {
+            "1": "Available",
+            "0": "In Use",
+            "-1": "Under Maintenance"
+        }
+
+        for row in report_data:
+            inventory_number = row[0]
+            type_name = row[1]
+            status = status_mapping.get(str(row[2]), "Unknown")
+            inspection_date = row[3].split(" ")[0] if row[3] else "N/A"
+            rental_start_date = row[4].split(" ")[0] if row[4] else "N/A"
+            rental_end_date = row[5].split(" ")[0] if row[5] else "Ongoing"
+            user_id = row[6] if row[6] else "N/A"
+            payment_method = row[7] if row[7] else "N/A"
+            payment_date = row[8].split(" ")[0] if row[8] else "N/A"
+            payment_status = row[9] if row[9] else "N/A"
+
+            sheet.append([
+                inventory_number, type_name, status, inspection_date,
+                rental_start_date, rental_end_date, user_id,
+                payment_method, payment_date, payment_status
+            ])
+
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
+        workbook.save(temp_file.name)
+        temp_file.seek(0)
+
+        return send_file(temp_file.name, as_attachment=True, download_name="bicycle_report.xlsx", mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    except Exception as e:
+        print(f"Error generating report: {e}")
+        return jsonify({"error": "Failed to generate report"}), 500
 
 @app.route('/api/admin/delete_user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
@@ -579,7 +647,7 @@ def get_rental_history():
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
 
-        # Fetch rental history for the logged-in user
+        
         cursor.execute('''
             SELECT b.inventory_number, b.type, t.name AS bike_type, r.start_date, r.end_date
             FROM rentals r

@@ -23,6 +23,25 @@ def generate_session_token(email):
     token = hashlib.sha256(f'{email}{random_uuid}'.encode()).hexdigest()
     return token
 
+def fetch_user_role_from_db():
+    """Fetch the user's role based on the session token from cookies."""
+    session_token = request.cookies.get('session_token')
+    if not session_token:
+        return None
+
+    conn = sqlite3.connect('bicycle_rental.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT roles.name FROM users
+        JOIN user_roles ON users.user_id = user_roles.user_id
+        JOIN roles ON user_roles.role_id = roles.role_id
+        WHERE users.session_token = ?
+    ''', (session_token,))
+    role = cursor.fetchone()
+    conn.close()
+    
+    return role[0] if role else None
+
 def fetch_bicycles():
     """Fetch bicycles with type information from the database."""
     try:
@@ -62,18 +81,23 @@ def fetch_bicycles():
         return []
         
 
-def get_user_role(session_token):
-    """Fetch the user's role from the database using their session token."""
+def fetch_user_role_from_db():
+    """Fetch the user's role if the session token is valid and not expired."""
+    session_token = session.get('session_token')
+    if not session_token:
+        return None
+
     conn = sqlite3.connect('bicycle_rental.db')
     cursor = conn.cursor()
     cursor.execute('''
         SELECT roles.name FROM users
         JOIN user_roles ON users.user_id = user_roles.user_id
         JOIN roles ON user_roles.role_id = roles.role_id
-        WHERE users.session_token = ?
-    ''', (session_token,))
+        WHERE users.session_token = ? AND users.session_expiration > ?
+    ''', (session_token, datetime.utcnow()))
     role = cursor.fetchone()
     conn.close()
+    
     return role[0] if role else None
 
 
@@ -99,29 +123,33 @@ def get_bicycles():
     bicycles = fetch_bicycles()
     return jsonify(bicycles)
 
-@app.route('/')
-def entry():
-    if request.cookies.get('session_token'):
-        return redirect(url_for('index'))
-    return render_template('login.html')
-
 @app.route('/client_dashboard')
 def client_dashboard():
-    if not session.get('role') == 'client':
+    role = fetch_user_role_from_db()
+    print(role)
+    if role != 'client':
         return "Forbidden", 403
     return render_template('client_dashboard.html')
 
 @app.route('/manager_dashboard')
 def manager_dashboard():
-    if not session.get('role') == 'manager':
+    role = fetch_user_role_from_db()
+    if role != 'manager':
         return "Forbidden", 403
     return render_template('manager_dashboard.html')
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    if not session.get('role') == 'admin':
+    role = fetch_user_role_from_db()
+    if role != 'admin':
         return "Forbidden", 403
     return render_template('admin_dashboard.html')
+
+@app.route('/')
+def entry():
+    if request.cookies.get('session_token'):
+        return redirect(url_for('index'))
+    return render_template('login.html')
 
 @app.route('/api/get_user_role')
 def get_user_role():
@@ -150,10 +178,19 @@ def handle_register():
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
 
+        # Insert the new user into the database
         cursor.execute('INSERT INTO users (first_name, last_name, email, password, registration_date) VALUES (?, ?, ?, ?, ?)',
                        (first_name, last_name, encrypted_email, hashed_password, registration_time))
         
         user_id = cursor.lastrowid
+
+        # Generate a session token and expiration time
+        session_token = generate_session_token(email)
+        session_expiration = datetime.utcnow() + timedelta(hours=24)
+
+        # Update the user with the session token and expiration
+        cursor.execute('UPDATE users SET session_token = ?, session_expiration = ? WHERE user_id = ?',
+                       (session_token, session_expiration, user_id))
 
         role_name = "client"
         cursor.execute('SELECT role_id FROM roles WHERE name = ?', (role_name,))
@@ -171,11 +208,9 @@ def handle_register():
     except sqlite3.IntegrityError:
         return jsonify({"message": "Email is already registered"}), 400
 
-    session_token = generate_session_token(email)
-    response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True}))
+    session['session_token'] = session_token
 
-    expires_at = datetime.utcnow() + timedelta(hours=24)
-    response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict', expires=expires_at)
+    response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True}))
     return response
 
 @app.route('/login', methods=['POST'])
@@ -189,28 +224,38 @@ def handle_login():
 
     conn = sqlite3.connect('bicycle_rental.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT password FROM users WHERE email = ?', (encrypted_email,))
+    cursor.execute('SELECT user_id, password FROM users WHERE email = ?', (encrypted_email,))
     row = cursor.fetchone()
-    conn.close()
 
-    if row and bcrypt.checkpw(password.encode('utf-8'), row[0]):
+    if row and bcrypt.checkpw(password.encode('utf-8'), row[1]):
+        user_id = row[0]
         session_token = generate_session_token(email)
-        response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True}))
+        session_expiration = datetime.utcnow() + timedelta(hours=24)
 
-        expires_at = datetime.utcnow() + timedelta(hours=24)
-        response.set_cookie('session_token', session_token, httponly=True, secure=True, samesite='Strict', expires=expires_at)
+        # Update the session token and expiration time in the database
+        cursor.execute('UPDATE users SET session_token = ?, session_expiration = ? WHERE user_id = ?',
+                       (session_token, session_expiration, user_id))
+        conn.commit()
+        conn.close()
+
+        # Store the session token in the session
+        session['session_token'] = session_token
+
+        response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True}))
         return response
     else:
+        conn.close()
         return jsonify({"message": "Invalid credentials"}), 401
-
+    
 @app.route('/index')
 def index():
     return render_template('index.html')
 
 @app.route('/logout')
 def logout():
+    session.clear()  # Clears session data
     response = make_response(redirect(url_for('entry')))
-    response.delete_cookie('session_token')
+    response.delete_cookie('session_token')  # Deletes the session_token cookie
     return response
 
 if __name__ == '__main__':

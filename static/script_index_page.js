@@ -1,69 +1,3 @@
-const bikes = [
-    { 
-        id: 1, 
-        name: "Mountain Explorer", 
-        type: "Sport", 
-        ready: true, 
-        image: "/api/placeholder/300/200" 
-    },
-    { 
-        id: 2, 
-        name: "City Cruiser", 
-        type: "Regular", 
-        ready: true, 
-        image: "/api/placeholder/300/200" 
-    },
-    { 
-        id: 3, 
-        name: "Road Master", 
-        type: "Sport", 
-        ready: false, 
-        image: "/api/placeholder/300/200" 
-    },
-    { 
-        id: 4, 
-        name: "Urban Rider", 
-        type: "Regular", 
-        ready: true, 
-        image: "/api/placeholder/300/200" 
-    },
-    { 
-        id: 5, 
-        name: "Trail Blazer", 
-        type: "Sport", 
-        ready: true, 
-        image: "/api/placeholder/300/200" 
-    },
-    { 
-        id: 6, 
-        name: "Commuter Plus", 
-        type: "Regular", 
-        ready: false, 
-        image: "/api/placeholder/300/200" 
-    }
-];
-
-function renderBikes(filteredBikes) {
-    const gallery = document.getElementById('bike-gallery');
-    gallery.innerHTML = '';
-
-    filteredBikes.forEach(bike => {
-        const card = document.createElement('div');
-        card.className = 'bike-card';
-        card.innerHTML = `
-            <img src="${bike.image}" alt="${bike.name}">
-            <div class="bike-info">
-                <h3>${bike.name}</h3>
-                <p>Type: ${bike.type}</p>
-                <span class="bike-status ${bike.ready ? 'status-ready' : 'status-not-ready'}">
-                    ${bike.ready ? 'Ready' : 'Not Ready'}
-                </span>
-            </div>
-        `;
-        gallery.appendChild(card);
-    });
-}
-
 document.getElementById('type-filter').addEventListener('change', (e) => {
     const selectedType = e.target.value;
     const filteredBikes = selectedType === 'all' 
@@ -106,15 +40,16 @@ function renderBikes(bicycles) {
 
         const bikeImageSrc = `${imgPath}/${bike.type.toLowerCase()}.png`;
 
+        const statusText = bike.status === "1" ? "Available" : bike.status === "0" ? "In Use" : "Under Maintenance";
+
+        const capitalizedType = bike.type.charAt(0).toUpperCase() + bike.type.slice(1);
+
         card.innerHTML = `
-            <img src="${bikeImageSrc}" alt="${bike.type} Bike" class="bike-image">
+            <img src="${bikeImageSrc}" alt="${capitalizedType} Bike" class="bike-image">
             <div class="bike-info">
-                ${Object.keys(bike).map(key => {
-                    if (key !== 'bicycle_id') {
-                        return `<p><strong>${key.replace('_', ' ')}:</strong> ${bike[key]}</p>`;
-                    }
-                    return '';
-                }).join('')}
+                <p><strong>Description:</strong> ${bike.description}</p>
+                <p><strong>Status:</strong> ${statusText}</p>
+                <p><strong>Type:</strong> ${capitalizedType}</p>
             </div>
         `;
 
@@ -123,21 +58,6 @@ function renderBikes(bicycles) {
         gallery.appendChild(card);
     });
 }
-
-async function fetchAndRenderBicycles() {
-    try {
-        const response = await fetch('/api/bicycles');
-        if (response.ok) {
-            const bicycles = await response.json();
-            renderBikes(bicycles);
-        } else {
-            console.error('Failed to fetch bicycles');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
 
 document.querySelector('.close-modal').addEventListener('click', () => {
     document.getElementById('rental-modal').style.display = 'none';
@@ -195,4 +115,56 @@ function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-fetchAndRenderBicycles()
+async function fetchTypes() {
+    try {
+        const response = await fetch('/api/types'); // Assuming an endpoint for types
+        if (response.ok) {
+            const types = await response.json();
+            const typeFilter = document.getElementById('type-filter');
+            
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type.toLowerCase();
+                option.textContent = type.charAt(0).toUpperCase() + type.slice(1); // Capitalize first letter
+                typeFilter.appendChild(option);
+            });
+        } else {
+            console.error('Failed to fetch types');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function applyFilters(bicycles) {
+    const selectedType = document.getElementById('type-filter').value;
+    const selectedAvailability = document.getElementById('availability-filter').value;
+
+    return bicycles.filter(bike => {
+        const matchesType = selectedType === 'all' || bike.type.toLowerCase() === selectedType;
+        const matchesAvailability = selectedAvailability === 'all' || bike.status === selectedAvailability;
+        return matchesType && matchesAvailability;
+    });
+}
+
+async function fetchAndRenderBicycles() {
+    try {
+        const response = await fetch('/api/bicycles');
+        if (response.ok) {
+            const bicycles = await response.json();
+
+            const filteredBicycles = applyFilters(bicycles);
+            renderBikes(filteredBicycles);
+        } else {
+            console.error('Failed to fetch bicycles');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+document.getElementById('type-filter').addEventListener('change', fetchAndRenderBicycles);
+document.getElementById('availability-filter').addEventListener('change', fetchAndRenderBicycles);
+
+fetchTypes();
+fetchAndRenderBicycles();

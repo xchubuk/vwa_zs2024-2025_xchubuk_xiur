@@ -23,8 +23,12 @@
         <div class="filters">
             <select id="type-filter">
                 <option value="all">All Types</option>
-                <option value="Sport">Sport</option>
-                <option value="Regular">Regular</option>
+            </select>
+            <select id="availability-filter">
+                <option value="all">All</option>
+                <option value="1">Available</option>
+                <option value="0">In Use</option>
+                <option value="-1">Under Maintenance</option>
             </select>
         </div>
         <div id="bike-gallery" data-img-path="{{ url_for('static', filename='img') }}"></div>

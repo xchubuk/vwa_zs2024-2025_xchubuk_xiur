@@ -61,6 +61,21 @@ def fetch_bicycles():
         print(f"Error: {e}")
         return []
 
+@app.route('/api/types', methods=['GET'])
+def get_types():
+    """API endpoint to get distinct bicycle types."""
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT type FROM bicycle_types")
+        
+        types = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        
+        return jsonify(types)
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify([]), 500
 
 @app.route('/api/bicycles', methods=['GET'])
 def get_bicycles():

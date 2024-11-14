@@ -90,15 +90,21 @@ nav {
 .bike-card {
     border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s;
-    cursor: pointer;
+    padding: 1rem;
+    background-color: #f9f9f9;
     max-width: 300px;
-    text-align: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
 }
 
 .bike-card:hover {
     transform: translateY(-5px);
+}
+
+.bike-info p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
 }
 
 .bike-card img.bike-image {

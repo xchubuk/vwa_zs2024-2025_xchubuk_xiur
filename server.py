@@ -17,23 +17,6 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 csrf = CSRFProtect(app)
 
-def init_db():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            registrationTime TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-init_db()
-
 def generate_session_token(email):
     """Generate a secure session token."""
     random_uuid = uuid.uuid4().hex
@@ -54,16 +37,33 @@ def handle_register():
     email = data.get('email')
     password = data.get('password')
     registration_time = data.get('registrationTime')
-    role = data.get('role')
 
+    names = name.split()
+    first_name = names[0] if len(names) > 0 else ""
+    last_name = names[1] if len(names) > 1 else ""
+    
     encrypted_email = hashlib.sha256(email.encode()).hexdigest()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
         cursor.execute('INSERT INTO users (name, email, password, registrationTime) VALUES (?, ?, ?)',
                        (name, encrypted_email, hashed_password, registration_time))
+        
+        user_id = cursor.lastrowid
+
+        role_name = "user"
+        cursor.execute('SELECT role_id FROM roles WHERE name = ?', (role_name,))
+        role = cursor.fetchone()
+
+        if role:
+            role_id = role[0]
+            start_date = registration_time
+            end_date = None
+            cursor.execute('INSERT INTO user_roles (user_id, role_id, start_date, end_date) VALUES (?, ?, ?, ?)',
+                           (user_id, role_id, start_date, end_date))
+
         conn.commit()
         conn.close()
     except sqlite3.IntegrityError:

@@ -39,9 +39,7 @@ function renderBikes(bicycles) {
         card.className = 'bike-card';
 
         const bikeImageSrc = `${imgPath}/${bike.type.toLowerCase()}.png`;
-
         const statusText = bike.status === "1" ? "Available" : bike.status === "0" ? "In Use" : "Under Maintenance";
-
         const capitalizedType = bike.type.charAt(0).toUpperCase() + bike.type.slice(1);
 
         card.innerHTML = `
@@ -53,7 +51,9 @@ function renderBikes(bicycles) {
             </div>
         `;
 
-        card.addEventListener('click', () => openModal(bike));
+        if (bike.status === "1") { // Assuming "1" means Available
+            card.addEventListener('click', () => openModal(bike));
+        }
 
         gallery.appendChild(card);
     });
@@ -80,6 +80,25 @@ document.querySelectorAll('.time-option').forEach(option => {
         rentButton.disabled = false;
         rentButton.textContent = `Rent for ${option.textContent}`;
     });
+});
+
+document.getElementById('logout-button').addEventListener('click', async () => {
+    try {
+        const response = await fetch('/logout', {
+            method: 'GET'
+        });
+
+        console.log(response.ok)
+
+        if (response.ok) {
+            location.href = '/';
+        } else {
+            alert('Failed to log out. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
 });
 
 document.getElementById('rent-button').addEventListener('click', async () => {

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response
+from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session
 from flask_wtf import CSRFProtect
 import bcrypt
 import hashlib
@@ -60,6 +60,22 @@ def fetch_bicycles():
     except Exception as e:
         print(f"Error: {e}")
         return []
+        
+
+def get_user_role(session_token):
+    """Fetch the user's role from the database using their session token."""
+    conn = sqlite3.connect('bicycle_rental.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT roles.name FROM users
+        JOIN user_roles ON users.user_id = user_roles.user_id
+        JOIN roles ON user_roles.role_id = roles.role_id
+        WHERE users.session_token = ?
+    ''', (session_token,))
+    role = cursor.fetchone()
+    conn.close()
+    return role[0] if role else None
+
 
 @app.route('/api/types', methods=['GET'])
 def get_types():
@@ -88,6 +104,31 @@ def entry():
     if request.cookies.get('session_token'):
         return redirect(url_for('index'))
     return render_template('login.html')
+
+@app.route('/client_dashboard')
+def client_dashboard():
+    if not session.get('role') == 'client':
+        return "Forbidden", 403
+    return render_template('client_dashboard.html')
+
+@app.route('/manager_dashboard')
+def manager_dashboard():
+    if not session.get('role') == 'manager':
+        return "Forbidden", 403
+    return render_template('manager_dashboard.html')
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if not session.get('role') == 'admin':
+        return "Forbidden", 403
+    return render_template('admin_dashboard.html')
+
+@app.route('/api/get_user_role')
+def get_user_role():
+    role = session.get('role')
+    if role:
+        return jsonify({"role": role})
+    return jsonify({"error": "Role not found"}), 401
 
 @app.route('/register', methods=['POST'])
 @csrf.exempt

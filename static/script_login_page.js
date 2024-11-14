@@ -110,7 +110,7 @@ async function handleRegister(event) {
             email: emailField.value,
             password: passwordField.value,
             role: "client",
-            registrationTime: new Date().toISOString()
+            registrationTime: Date.now()
         }
         
         const response = await fetch('/register', {

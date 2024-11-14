@@ -36,7 +36,7 @@ def handle_register():
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
-    registration_time = data.get('registrationTime')
+    registration_time = datetime.fromtimestamp(data.get('registrationTime') / 1000).strftime('%Y-%m-%d %H:%M:%S')
 
     names = name.split()
     first_name = names[0] if len(names) > 0 else ""
@@ -48,14 +48,17 @@ def handle_register():
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (name, email, password, registrationTime) VALUES (?, ?, ?)',
-                       (name, encrypted_email, hashed_password, registration_time))
+
+        cursor.execute('INSERT INTO users (first_name, last_name, email, password, registration_date) VALUES (?, ?, ?, ?, ?)',
+                       (first_name, last_name, encrypted_email, hashed_password, registration_time))
         
         user_id = cursor.lastrowid
 
-        role_name = "user"
+        role_name = "client"
         cursor.execute('SELECT role_id FROM roles WHERE name = ?', (role_name,))
         role = cursor.fetchone()
+
+        print(role)
 
         if role:
             role_id = role[0]

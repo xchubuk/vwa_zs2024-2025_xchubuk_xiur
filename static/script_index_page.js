@@ -105,22 +105,31 @@ document.getElementById('rent-button').addEventListener('click', async () => {
     const modal = document.getElementById('rental-modal');
     const bikeId = modal.dataset.bikeId;
     const selectedTime = document.querySelector('.time-option.selected').dataset.hours;
+    const paymentType = document.querySelector('input[name="payment"]:checked')?.value;
+
+    if (!paymentType) {
+        alert("Please select a payment type.");
+        return;
+    }
 
     try {
         const response = await fetch('/api/rent', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             },
             body: JSON.stringify({
                 bikeId: bikeId,
-                hours: selectedTime
+                hours: selectedTime,
+                payment: paymentType
             })
         });
 
         if (response.ok) {
             alert('Rental successful!');
             modal.style.display = 'none';
+            fetchAndRenderBicycles();
         } else {
             alert('Failed to process rental. Please try again.');
         }

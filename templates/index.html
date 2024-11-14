@@ -39,12 +39,23 @@
             <img id="modal-bike-image" class="modal-image" src="" alt="Bike">
             <h2 id="modal-bike-name"></h2>
             <p id="modal-bike-type"></p>
+    
             <div class="rental-options">
                 <div class="time-option" data-hours="2">2 Hours</div>
                 <div class="time-option" data-hours="4">4 Hours</div>
                 <div class="time-option" data-hours="8">8 Hours</div>
                 <div class="time-option" data-hours="24">1 Day</div>
             </div>
+    
+            <div class="payment-options">
+                <label>
+                    <input type="radio" name="payment" value="cash" required> Cash
+                </label>
+                <label>
+                    <input type="radio" name="payment" value="card" required> Card
+                </label>
+            </div>
+    
             <button id="rent-button" class="rent-button" disabled>Select rental duration</button>
         </div>
     </div>

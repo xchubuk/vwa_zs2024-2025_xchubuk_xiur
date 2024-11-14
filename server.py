@@ -46,15 +46,14 @@ def fetch_bicycles():
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT b.bicycle_id, b.inventory_number, b.type, b.status, t.name as type_name, t.description 
+            SELECT b.bicycle_id, b.inventory_number, b.type, t.name AS type_name, t.description, bs.status
             FROM bicycles b
             JOIN bicycle_types t ON b.type_id = t.type_id
+            LEFT JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
+            WHERE bs.status_id = (SELECT MAX(status_id) FROM bicycle_status WHERE bicycle_id = b.bicycle_id)
         ''')
         
         rows = cursor.fetchall()
-
-        if not rows:
-            print("No bicycles found in the database.")
 
         bicycles = []
         for row in rows:
@@ -62,19 +61,15 @@ def fetch_bicycles():
                 "bicycle_id": row[0],
                 "inventory_number": row[1],
                 "type": row[2],
-                "status": row[3],
-                "type_name": row[4],
-                "description": row[5]
+                "type_name": row[3],
+                "description": row[4],
+                "status": row[5]
             })
         
         conn.close()
-        
         return bicycles
     except sqlite3.Error as e:
         print(f"Database error: {e}")
-        return []
-    except Exception as e:
-        print(f"Error: {e}")
         return []
         
 
@@ -129,11 +124,12 @@ def get_admin_bicycles():
         
         
         cursor.execute('''
-            SELECT b.bicycle_id, b.inventory_number, b.type, b.status, t.name AS type_name, 
-                   t.description, bs.inspection_date, bs.user_id, bs.comment
+            SELECT b.bicycle_id, b.inventory_number, b.type, t.name AS type_name, 
+                   t.description, bs.inspection_date, bs.user_id, bs.comment, bs.status
             FROM bicycles b
             JOIN bicycle_types t ON b.type_id = t.type_id
             LEFT JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
+            WHERE bs.status_id = (SELECT MAX(status_id) FROM bicycle_status WHERE bicycle_id = b.bicycle_id)
             ORDER BY b.bicycle_id
         ''')
         
@@ -145,12 +141,12 @@ def get_admin_bicycles():
                 "bicycle_id": row[0],
                 "inventory_number": row[1],
                 "type": row[2],
-                "status": row[3],
-                "type_name": row[4],
-                "description": row[5],
-                "inspection_date": row[6],
-                "user_id": row[7],
-                "comment": row[8]
+                "type_name": row[3],
+                "description": row[4],
+                "inspection_date": row[5],
+                "user_id": row[6],
+                "comment": row[7],
+                "status": row[8]
             })
         
         conn.close()
@@ -183,36 +179,43 @@ def admin_dashboard():
 
 @app.route('/api/admin/bicycles', methods=['POST'])
 def add_bicycle():
-    role = fetch_user_role_from_db()
-    if role != 'admin':
-        return abort(403)
-
     data = request.get_json()
+
     inventory_number = data.get('inventory_number')
     type_id = data.get('type_id')
-    inspection_date = data.get('inspection_date')
     comment = data.get('comment')
-    status = data.get('status')
+    status = data.get('status')  
+    inspection_date = data.get('inspection_date')  
+
+    if not inventory_number or type_id is None or status is None:
+        return jsonify({"error": "Missing required fields"}), 400
 
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
+
+        cursor.execute('SELECT type FROM bicycle_types WHERE type_id = ?', (type_id,))
+        type_row = cursor.fetchone()
         
+        if not type_row:
+            return jsonify({"error": "Invalid type_id"}), 400
+
+        type_value = type_row[0]
+
         cursor.execute('''
-            INSERT INTO bicycles (inventory_number, type_id, status)
+            INSERT INTO bicycles (inventory_number, type_id, type)
             VALUES (?, ?, ?)
-        ''', (inventory_number, type_id, status))
-        
+        ''', (inventory_number, type_id, type_value))
+
         bicycle_id = cursor.lastrowid
 
         cursor.execute('''
-            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, comment)
-            VALUES (?, ?, ?, ?)
-        ''', (bicycle_id, inspection_date, 'Available', comment))
-        
+            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
+            VALUES (?, ?, ?, NULL, ?)
+        ''', (bicycle_id, inspection_date, str(status), comment))
+
         conn.commit()
         conn.close()
-        
         return jsonify({"message": "Bicycle added successfully"}), 201
     except sqlite3.Error as e:
         print(f"Database error: {e}")
@@ -272,29 +275,26 @@ def update_user_role(user_id):
     
 @app.route('/api/admin/bicycles/<int:bicycle_id>/status', methods=['POST'])
 def update_bicycle_status(bicycle_id):
-    role = fetch_user_role_from_db()
-    if role != 'admin':
-        return abort(403)
-    
     data = request.get_json()
     new_status = data.get('status')
+    comment = data.get('comment', '')
+    user_id = session.get('user_id')  
 
-    if new_status not in [1, 0, -1]:
-        return jsonify({"error": "Invalid status"}), 400
+    if new_status is None:
+        return jsonify({"error": "Status is required"}), 400
 
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
-
+        
         cursor.execute('''
-            UPDATE bicycles
-            SET status = ?
-            WHERE bicycle_id = ?
-        ''', (new_status, bicycle_id))
+            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
+            VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)
+        ''', (bicycle_id, str(new_status), user_id, comment))
 
         conn.commit()
         conn.close()
-
+        
         return jsonify({"message": "Bicycle status updated successfully"}), 200
     except sqlite3.Error as e:
         print(f"Database error: {e}")
@@ -430,6 +430,50 @@ def delete_user(user_id):
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to delete user"}), 500
 
+@app.route('/api/rent', methods=['POST'])
+def rent_bicycle():
+    print("Session data:", dict(session))  
+    data = request.get_json()
+    user_id = session.get('user_id')
+    bicycle_id = data.get('bikeId')
+    hours = data.get('hours')
+    payment_type = data.get('payment')
+
+    if not user_id or not bicycle_id or not hours or not payment_type:
+        return jsonify({"error": "All fields are required"}), 400
+
+    start_date = datetime.utcnow()
+    end_date = start_date + timedelta(hours=int(hours))
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO rentals (user_id, bicycle_id, status_at_start, status_at_end, start_date, end_date)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (user_id, bicycle_id, "Available", "In Use", start_date, end_date))
+
+        rental_id = cursor.lastrowid
+
+        cursor.execute('''
+            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (bicycle_id, start_date, "0", user_id, "Bicycle rented"))
+
+        if payment_type:
+            cursor.execute('''
+                INSERT INTO transactions (rental_id, amount, payment_method, payment_date, payment_status)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (rental_id, hours * 10, payment_type, start_date, "Paid"))
+
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "Rental successful"}), 200
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to rent bicycle"}), 500
 
 @app.route('/')
 def entry():
@@ -481,19 +525,20 @@ def handle_register():
         if role:
             role_id = role[0]
             start_date = registration_time
-            end_date = None
-            cursor.execute('INSERT INTO user_roles (user_id, role_id, start_date, end_date) VALUES (?, ?, ?, ?)',
-                           (user_id, role_id, start_date, end_date))
+            cursor.execute('INSERT INTO user_roles (user_id, role_id, start_date) VALUES (?, ?, ?)',
+                           (user_id, role_id, start_date))
 
         conn.commit()
         conn.close()
+
+        
+        session['session_token'] = session_token
+        session['user_id'] = user_id
+
+        response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True}))
+        return response
     except sqlite3.IntegrityError:
         return jsonify({"message": "Email is already registered"}), 400
-
-    session['session_token'] = session_token
-
-    response = make_response(jsonify({"message": "Registration successful", "redirect_url": url_for('index'), "success": True}))
-    return response
 
 @app.route('/login', methods=['POST'])
 @csrf.exempt
@@ -520,6 +565,7 @@ def handle_login():
 
         
         session['session_token'] = session_token
+        session['user_id'] = user_id
 
         response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True}))
         return response

@@ -131,27 +131,31 @@ function updateBikeType(bicycleId, newTypeId) {
 
 function populateBicyclesTable() {
     const tbody = document.querySelector('#bicyclesTable tbody');
-    tbody.innerHTML = bicycles.map(bike => `
-        <tr>
-            <td>${bike.bicycle_id}</td>
-            <td>${bike.inventory_number}</td>
-            <td>${bike.type_name || ''}</td>
-            <td>
-                <select onchange="updateBikeStatus(${bike.bicycle_id}, this.value)">
-                    <option value="1" ${bike.status === 1 ? 'selected' : ''}>Available</option>
-                    <option value="0" ${bike.status === 0 ? 'selected' : ''}>In Use</option>
-                    <option value="-1" ${bike.status === -1 ? 'selected' : ''}>Under Maintenance</option>
-                </select>
-            </td>
-            <td>${bike.inspection_date ? new Date(bike.inspection_date).toLocaleString() : 'N/A'}</td>
-            <td>${bike.user_id || 'N/A'}</td>
-            <td>${bike.comment || 'No comments'}</td>
-            <td>
-                <button class="button" onclick="removeBicycle(${bike.bicycle_id})">Remove</button>
-            </td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = bicycles.map(bike => {
+        const statusValue = parseInt(bike.status);
+        return `
+            <tr>
+                <td>${bike.bicycle_id}</td>
+                <td>${bike.inventory_number}</td>
+                <td>${bike.type_name || ''}</td>
+                <td>
+                    <select onchange="updateBikeStatus(${bike.bicycle_id}, this.value)">
+                        <option value="1" ${statusValue === 1 ? 'selected' : ''}>Available</option>
+                        <option value="0" ${statusValue === 0 ? 'selected' : ''}>In Use</option>
+                        <option value="-1" ${statusValue === -1 ? 'selected' : ''}>Under Maintenance</option>
+                    </select>
+                </td>
+                <td>${bike.inspection_date ? new Date(bike.inspection_date).toLocaleString() : 'N/A'}</td>
+                <td>${bike.user_id || 'N/A'}</td>
+                <td>${bike.comment || 'No comments'}</td>
+                <td>
+                    <button class="button" onclick="removeBicycle(${bike.bicycle_id})">Remove</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
+
 
 function populateBicycleTypes() {
     fetch('/api/bicycle_types')
@@ -166,14 +170,16 @@ function populateBicycleTypes() {
 
 function addBicycle(event) {
     event.preventDefault();
-    
+
     const newBicycle = {
         inventory_number: document.getElementById('inventoryNumber').value,
         type_id: parseInt(document.getElementById('typeId').value),
         inspection_date: document.getElementById('inspectionDate').value,
         comment: document.getElementById('comment').value,
-        status: 1
+        status: "1"
     };
+
+    console.log("Payload for addBicycle:", newBicycle);
 
     fetch('/api/admin/bicycles', {
         method: 'POST',
@@ -231,7 +237,7 @@ function updateBikeStatus(bicycleId, newStatus) {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify({ status: parseInt(newStatus) })
+        body: JSON.stringify({ status: parseInt(newStatus) })  // Ensure integer
     })
     .then(response => {
         if (response.ok) {

@@ -1,0 +1,190 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #00acc1;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 1rem;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+}
+
+.tab-button.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.content {
+    padding: 1rem;
+    min-height: calc(100vh - 120px);
+}
+
+.footer {
+    background-color: #546e7a;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    height: 60px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4dd0e1;
+    color: white;
+}
+
+.add-user-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.add-user-button:hover {
+    background-color: #45a049;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.close {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.submit-button {
+    background: #00acc1;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background: #4dd0e1;
+}
+
+.button {
+    background: #00acc1;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #4dd0e1;
+}
+
+.save-button {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 100;
+}
+
+@media (max-width: 768px) {
+    .nav-tabs {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        width: 95%;
+    }
+
+    table, .tab-content {
+        display: block;
+        overflow-x: auto;
+    }
+}

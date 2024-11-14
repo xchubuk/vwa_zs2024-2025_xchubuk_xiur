@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session, abort
 from flask_wtf import CSRFProtect
 import bcrypt
 import hashlib
@@ -18,13 +18,11 @@ app.secret_key = SECRET_KEY
 csrf = CSRFProtect(app)
 
 def generate_session_token(email):
-    """Generate a secure session token."""
     random_uuid = uuid.uuid4().hex
     token = hashlib.sha256(f'{email}{random_uuid}'.encode()).hexdigest()
     return token
 
 def fetch_user_role_from_db():
-    """Fetch the user's role based on the session token from cookies."""
     session_token = request.cookies.get('session_token')
     if not session_token:
         return None
@@ -43,7 +41,6 @@ def fetch_user_role_from_db():
     return role[0] if role else None
 
 def fetch_bicycles():
-    """Fetch bicycles with type information from the database."""
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
@@ -82,7 +79,6 @@ def fetch_bicycles():
         
 
 def fetch_user_role_from_db():
-    """Fetch the user's role if the session token is valid and not expired."""
     session_token = session.get('session_token')
     if not session_token:
         return None
@@ -103,7 +99,6 @@ def fetch_user_role_from_db():
 
 @app.route('/api/types', methods=['GET'])
 def get_types():
-    """API endpoint to get distinct bicycle types."""
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
@@ -119,9 +114,51 @@ def get_types():
 
 @app.route('/api/bicycles', methods=['GET'])
 def get_bicycles():
-    """API endpoint to get the list of bicycles."""
     bicycles = fetch_bicycles()
     return jsonify(bicycles)
+
+@app.route('/api/admin/bicycles', methods=['GET'])
+def get_admin_bicycles():
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)  
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        
+        cursor.execute('''
+            SELECT b.bicycle_id, b.inventory_number, b.type, b.status, t.name AS type_name, 
+                   t.description, bs.inspection_date, bs.user_id, bs.comment
+            FROM bicycles b
+            JOIN bicycle_types t ON b.type_id = t.type_id
+            LEFT JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
+            ORDER BY b.bicycle_id
+        ''')
+        
+        rows = cursor.fetchall()
+
+        bicycles = []
+        for row in rows:
+            bicycles.append({
+                "bicycle_id": row[0],
+                "inventory_number": row[1],
+                "type": row[2],
+                "status": row[3],
+                "type_name": row[4],
+                "description": row[5],
+                "inspection_date": row[6],
+                "user_id": row[7],
+                "comment": row[8]
+            })
+        
+        conn.close()
+        return jsonify(bicycles)
+    
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify([]), 500
 
 @app.route('/client_dashboard')
 def client_dashboard():
@@ -143,6 +180,256 @@ def admin_dashboard():
     if role != 'admin':
         return "Forbidden", 403
     return render_template('admin_dashboard.html')
+
+@app.route('/api/admin/bicycles', methods=['POST'])
+def add_bicycle():
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+
+    data = request.get_json()
+    inventory_number = data.get('inventory_number')
+    type_id = data.get('type_id')
+    inspection_date = data.get('inspection_date')
+    comment = data.get('comment')
+    status = data.get('status')
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO bicycles (inventory_number, type_id, status)
+            VALUES (?, ?, ?)
+        ''', (inventory_number, type_id, status))
+        
+        bicycle_id = cursor.lastrowid
+
+        cursor.execute('''
+            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, comment)
+            VALUES (?, ?, ?, ?)
+        ''', (bicycle_id, inspection_date, 'Available', comment))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "Bicycle added successfully"}), 201
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to add bicycle"}), 500
+    
+@app.route('/api/bicycle_types', methods=['GET'])
+def get_bicycle_types():
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT type_id, name FROM bicycle_types")
+        types = [{"type_id": row[0], "name": row[1]} for row in cursor.fetchall()]
+        
+        conn.close()
+        return jsonify(types)
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify([]), 500
+    
+@app.route('/api/admin/users/<int:user_id>/role', methods=['POST'])
+def update_user_role(user_id):
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+
+    data = request.get_json()
+    new_role = data.get('role')
+
+    if new_role not in ["client", "manager", "admin"]:
+        return jsonify({"error": "Invalid role"}), 400
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT role_id FROM roles WHERE name = ?', (new_role,))
+        role_id_row = cursor.fetchone()
+        if not role_id_row:
+            return jsonify({"error": "Role not found"}), 404
+        
+        new_role_id = role_id_row[0]
+
+        cursor.execute('''
+            UPDATE user_roles
+            SET role_id = ?, start_date = ?
+            WHERE user_id = ?
+        ''', (new_role_id, datetime.utcnow(), user_id))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "User role updated successfully"}), 200
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to update user role"}), 500
+    
+@app.route('/api/admin/bicycles/<int:bicycle_id>/status', methods=['POST'])
+def update_bicycle_status(bicycle_id):
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+    
+    data = request.get_json()
+    new_status = data.get('status')
+
+    if new_status not in [1, 0, -1]:
+        return jsonify({"error": "Invalid status"}), 400
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            UPDATE bicycles
+            SET status = ?
+            WHERE bicycle_id = ?
+        ''', (new_status, bicycle_id))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "Bicycle status updated successfully"}), 200
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to update bicycle status"}), 500
+    
+@app.route('/api/admin/bicycles/<int:bicycle_id>', methods=['DELETE'])
+def remove_bicycle(bicycle_id):
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('DELETE FROM bicycle_status WHERE bicycle_id = ?', (bicycle_id,))
+        cursor.execute('DELETE FROM bicycles WHERE bicycle_id = ?', (bicycle_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "Bicycle removed successfully"}), 200
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to remove bicycle"}), 500
+    
+@app.route('/api/admin/users', methods=['GET'])
+def get_admin_users():
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT u.user_id, u.first_name, u.last_name, u.email, u.registration_date, r.name as role_name
+            FROM users u
+            LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+            LEFT JOIN roles r ON ur.role_id = r.role_id
+            ORDER BY u.user_id
+        ''')
+
+        users = []
+        for row in cursor.fetchall():
+            users.append({
+                "user_id": row[0],
+                "first_name": row[1],
+                "last_name": row[2],
+                "email": row[3],
+                "registration_date": row[4],
+                "role": row[5]
+            })
+
+        conn.close()
+        return jsonify(users)
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to fetch users"}), 500
+    
+@app.route('/api/admin/add_user', methods=['POST'])
+def add_user():
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)  
+
+    data = request.get_json()
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    email = data.get('email')
+    password = data.get('password')
+    role_name = data.get('role')
+
+    if not (first_name and last_name and email and password and role_name):
+        return jsonify({"error": "All fields are required"}), 400
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    registration_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        
+        cursor.execute('''
+            INSERT INTO users (first_name, last_name, email, password, registration_date)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (first_name, last_name, email, hashed_password, registration_time))
+        
+        user_id = cursor.lastrowid
+
+        
+        cursor.execute('SELECT role_id FROM roles WHERE name = ?', (role_name,))
+        role = cursor.fetchone()
+        if role:
+            role_id = role[0]
+            cursor.execute('''
+                INSERT INTO user_roles (user_id, role_id, start_date)
+                VALUES (?, ?, ?)
+            ''', (user_id, role_id, registration_time))
+
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "User added successfully"}), 201
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Email is already registered"}), 400
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to add user"}), 500
+
+@app.route('/api/admin/delete_user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    role = fetch_user_role_from_db()
+    if role != 'admin':
+        return abort(403)  
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        
+        cursor.execute('DELETE FROM user_roles WHERE user_id = ?', (user_id,))
+        cursor.execute('DELETE FROM users WHERE user_id = ?', (user_id,))
+        
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "User deleted successfully"}), 200
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to delete user"}), 500
+
 
 @app.route('/')
 def entry():
@@ -170,24 +457,20 @@ def handle_register():
     first_name = names[0] if len(names) > 0 else ""
     last_name = names[1] if len(names) > 1 else ""
     
-    encrypted_email = hashlib.sha256(email.encode()).hexdigest()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     try:
         conn = sqlite3.connect('bicycle_rental.db')
         cursor = conn.cursor()
 
-        # Insert the new user into the database
         cursor.execute('INSERT INTO users (first_name, last_name, email, password, registration_date) VALUES (?, ?, ?, ?, ?)',
-                       (first_name, last_name, encrypted_email, hashed_password, registration_time))
+                       (first_name, last_name, email, hashed_password, registration_time))
         
         user_id = cursor.lastrowid
 
-        # Generate a session token and expiration time
         session_token = generate_session_token(email)
         session_expiration = datetime.utcnow() + timedelta(hours=24)
-
-        # Update the user with the session token and expiration
+        
         cursor.execute('UPDATE users SET session_token = ?, session_expiration = ? WHERE user_id = ?',
                        (session_token, session_expiration, user_id))
 
@@ -219,11 +502,9 @@ def handle_login():
     email = data.get('email')
     password = data.get('password')
 
-    encrypted_email = hashlib.sha256(email.encode()).hexdigest()
-
     conn = sqlite3.connect('bicycle_rental.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT user_id, password FROM users WHERE email = ?', (encrypted_email,))
+    cursor.execute('SELECT user_id, password FROM users WHERE email = ?', (email,))
     row = cursor.fetchone()
 
     if row and bcrypt.checkpw(password.encode('utf-8'), row[1]):
@@ -231,13 +512,13 @@ def handle_login():
         session_token = generate_session_token(email)
         session_expiration = datetime.utcnow() + timedelta(hours=24)
 
-        # Update the session token and expiration time in the database
+        
         cursor.execute('UPDATE users SET session_token = ?, session_expiration = ? WHERE user_id = ?',
                        (session_token, session_expiration, user_id))
         conn.commit()
         conn.close()
 
-        # Store the session token in the session
+        
         session['session_token'] = session_token
 
         response = make_response(jsonify({"message": "Login successful", "redirect_url": url_for('index'), "success": True}))
@@ -252,9 +533,9 @@ def index():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # Clears session data
+    session.clear()  
     response = make_response(redirect(url_for('entry')))
-    response.delete_cookie('session_token')  # Deletes the session_token cookie
+    response.delete_cookie('session_token')  
     return response
 
 if __name__ == '__main__':

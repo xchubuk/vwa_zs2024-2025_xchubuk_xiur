@@ -51,7 +51,7 @@ function renderBikes(bicycles) {
             </div>
         `;
 
-        if (bike.status === "1") { // Assuming "1" means Available
+        if (bike.status === "1") { 
             card.addEventListener('click', () => openModal(bike));
         }
 
@@ -136,7 +136,7 @@ function getCsrfToken() {
 
 async function fetchTypes() {
     try {
-        const response = await fetch('/api/types'); // Assuming an endpoint for types
+        const response = await fetch('/api/types');
         if (response.ok) {
             const types = await response.json();
             const typeFilter = document.getElementById('type-filter');
@@ -144,7 +144,7 @@ async function fetchTypes() {
             types.forEach(type => {
                 const option = document.createElement('option');
                 option.value = type.toLowerCase();
-                option.textContent = type.charAt(0).toUpperCase() + type.slice(1); // Capitalize first letter
+                option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
                 typeFilter.appendChild(option);
             });
         } else {

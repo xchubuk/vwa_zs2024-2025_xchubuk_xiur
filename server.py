@@ -23,6 +23,51 @@ def generate_session_token(email):
     token = hashlib.sha256(f'{email}{random_uuid}'.encode()).hexdigest()
     return token
 
+def fetch_bicycles():
+    """Fetch bicycles with type information from the database."""
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT b.bicycle_id, b.inventory_number, b.type, b.status, t.name as type_name, t.description 
+            FROM bicycles b
+            JOIN bicycle_types t ON b.type_id = t.type_id
+        ''')
+        
+        rows = cursor.fetchall()
+
+        if not rows:
+            print("No bicycles found in the database.")
+
+        bicycles = []
+        for row in rows:
+            bicycles.append({
+                "bicycle_id": row[0],
+                "inventory_number": row[1],
+                "type": row[2],
+                "status": row[3],
+                "type_name": row[4],
+                "description": row[5]
+            })
+        
+        conn.close()
+        
+        return bicycles
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return []
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
+
+
+@app.route('/api/bicycles', methods=['GET'])
+def get_bicycles():
+    """API endpoint to get the list of bicycles."""
+    bicycles = fetch_bicycles()
+    return jsonify(bicycles)
+
 @app.route('/')
 def entry():
     if request.cookies.get('session_token'):
@@ -58,8 +103,6 @@ def handle_register():
         cursor.execute('SELECT role_id FROM roles WHERE name = ?', (role_name,))
         role = cursor.fetchone()
 
-        print(role)
-
         if role:
             role_id = role[0]
             start_date = registration_time
@@ -88,7 +131,7 @@ def handle_login():
 
     encrypted_email = hashlib.sha256(email.encode()).hexdigest()
 
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('bicycle_rental.db')
     cursor = conn.cursor()
     cursor.execute('SELECT password FROM users WHERE email = ?', (encrypted_email,))
     row = cursor.fetchone()
@@ -106,7 +149,7 @@ def handle_login():
 
 @app.route('/index')
 def index():
-    return "Welcome to the Index Page!"
+    return render_template('index.html')
 
 @app.route('/logout')
 def logout():

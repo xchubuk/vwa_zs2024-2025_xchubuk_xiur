@@ -77,7 +77,6 @@ async function returnBicycle(bicycleId) {
         fetchAndPopulateTable();
     } catch (error) {
         console.error('Error returning bicycle:', error);
-        alert(error.message);
     }
 }
 
@@ -105,7 +104,6 @@ async function submitRepairRequest() {
             throw new Error('Failed to submit repair request');
         }
 
-        alert('Repair request submitted successfully.');
         closeRepairForm();
         fetchAndPopulateTable();
     } catch (error) {
@@ -146,16 +144,6 @@ document.getElementById('repairForm').onsubmit = function (e) {
 
     modal.style.display = 'none';
     alert('Repair request submitted successfully!');
-}
-
-function returnBike(bikeId) {
-    // Implementation for returning a bike
-    alert(`Bike ${bikeId} marked as returned`);
-}
-
-function rentBike(bikeId) {
-    // Implementation for renting a bike
-    alert(`Bike ${bikeId} marked as rented`);
 }
 
 function getCsrfToken() {

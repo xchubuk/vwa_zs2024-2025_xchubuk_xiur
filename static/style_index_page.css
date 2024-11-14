@@ -9,14 +9,8 @@ body, html {
     overflow-x: hidden;
 }
 
-:root {
-    --primary: #00acc1;
-    --secondary: #4dd0e1;
-    --dark: #546e7a;
-}
-
 header {
-    background-color: var(--primary);
+    background-color: #00acc1;
     padding: 0.5rem 1rem;
     position: sticky;
     top: 0;
@@ -47,7 +41,7 @@ nav {
 }
 
 .nav-links button {
-    background: var(--secondary);
+    background: #4dd0e1;
     border: none;
     padding: 0.3rem 0.8rem;
     color: white;
@@ -71,7 +65,7 @@ nav {
 .filters select {
     padding: 0.5rem;
     margin-right: 1rem;
-    border: 1px solid var(--dark);
+    border: 1px solid #546e7a;
     border-radius: 4px;
 }
 
@@ -137,7 +131,7 @@ nav {
 }
 
 footer {
-    background-color: var(--dark);
+    background-color: #546e7a;
     color: white;
     padding: 1.5rem 1rem;
     margin-top: 2rem;
@@ -213,19 +207,19 @@ footer {
 
 .time-option {
     padding: 10px;
-    border: 2px solid var(--primary);
+    border: 2px solid #00acc1;
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
 }
 
 .time-option.selected {
-    background-color: var(--primary);
+    background-color: #00acc1;
     color: white;
 }
 
 .rent-button {
-    background-color: var(--primary);
+    background-color: #00acc1;
     color: white;
     padding: 10px 20px;
     border: none;

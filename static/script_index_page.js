@@ -92,12 +92,9 @@ document.getElementById('logout-button').addEventListener('click', async () => {
 
         if (response.ok) {
             location.href = '/';
-        } else {
-            alert('Failed to log out. Please try again.');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred. Please try again.');
     }
 });
 
@@ -135,7 +132,6 @@ document.getElementById('rent-button').addEventListener('click', async () => {
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred. Please try again.');
     }
 });
 

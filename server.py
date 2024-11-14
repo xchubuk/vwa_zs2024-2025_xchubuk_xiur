@@ -126,7 +126,6 @@ def get_bicycles():
 @app.route('/client_dashboard')
 def client_dashboard():
     role = fetch_user_role_from_db()
-    print(role)
     if role != 'client':
         return "Forbidden", 403
     return render_template('client_dashboard.html')
@@ -153,7 +152,7 @@ def entry():
 
 @app.route('/api/get_user_role')
 def get_user_role():
-    role = session.get('role')
+    role = fetch_user_role_from_db()
     if role:
         return jsonify({"role": role})
     return jsonify({"error": "Role not found"}), 401

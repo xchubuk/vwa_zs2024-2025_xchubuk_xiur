@@ -182,6 +182,41 @@ async function fetchAndRenderBicycles() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch('/api/get_user_role');
+        if (response.ok) {
+            const data = await response.json();
+            let dashboardLink = '#';
+
+            switch (data.role) {
+                case 'client':
+                    dashboardLink = '/client_dashboard';
+                    break;
+                case 'manager':
+                    dashboardLink = '/manager_dashboard';
+                    break;
+                case 'admin':
+                    dashboardLink = '/admin_dashboard';
+                    break;
+                default:
+                    console.warn('User role not recognized.');
+            }
+
+            const dashboardButton = document.getElementById('dashboard-button');
+            if (dashboardButton) {
+                dashboardButton.addEventListener('click', () => {
+                    location.href = dashboardLink;
+                });
+            }
+        } else {
+            console.error("Failed to retrieve user role.");
+        }
+    } catch (error) {
+        console.error("Error fetching user role:", error);
+    }
+});
+
 document.getElementById('type-filter').addEventListener('change', fetchAndRenderBicycles);
 document.getElementById('availability-filter').addEventListener('change', fetchAndRenderBicycles);
 

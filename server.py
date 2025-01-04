@@ -3,6 +3,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response, session, abort, send_file
 from flask_wtf import CSRFProtect
 from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
 import tempfile
 import bcrypt
 import hashlib
@@ -542,7 +543,7 @@ def get_admin_users():
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500
     
-@app.route('/api/admi-dd_user', methods=['POST'])
+@app.route('/api/admin/add_user', methods=['POST'])
 def add_user():
     role = fetch_user_role_from_db()
     if role != 'admin':
@@ -604,13 +605,31 @@ def generate_report():
         cursor = conn.cursor()
 
         cursor.execute('''
-            SELECT b.inventory_number, t.name AS type_name, bs.status, bs.inspection_date,
-            r.start_date, r.end_date, r.user_id, tr.payment_method, tr.payment_date, tr.payment_status
+            SELECT 
+                b.inventory_number,
+                t.name AS type_name,
+                bs.status,
+                bs.inspection_date,
+                r.start_date,
+                r.end_date,
+                u.first_name || ' ' || u.last_name as renter_name,
+                tr.amount as rental_cost,
+                tr.payment_method,
+                tr.payment_status,
+                rep.repair_notes,
+                rep.completion_date as repair_date,
+                m.first_name || ' ' || m.last_name as mechanic_name,
+                sr.problem_description,
+                sr.creation_date as repair_request_date
             FROM bicycles b
             JOIN bicycle_types t ON b.type_id = t.type_id
             LEFT JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
             LEFT JOIN rentals r ON b.bicycle_id = r.bicycle_id
+            LEFT JOIN users u ON r.user_id = u.user_id
             LEFT JOIN transactions tr ON r.rental_id = tr.rental_id
+            LEFT JOIN repairments rep ON b.bicycle_id = rep.bicycle_id
+            LEFT JOIN users m ON rep.mechanic_id = m.user_id
+            LEFT JOIN service_requests sr ON b.bicycle_id = sr.bicycle_id
             WHERE bs.status_id = (SELECT MAX(status_id) FROM bicycle_status WHERE bicycle_id = b.bicycle_id)
             ORDER BY b.inventory_number, r.start_date DESC
         ''')
@@ -621,7 +640,23 @@ def generate_report():
         sheet = workbook.active
         sheet.title = "Bicycle Report"
 
-        headers = ["Inventory Number", "Type", "Status", "Last Inspection Date", "Rental Start Date", "Rental End Date", "User ID", "Payment Method", "Payment Date", "Payment Status"]
+        headers = [
+            "Inventory Number",
+            "Type",
+            "Current Status",
+            "Last Inspection",
+            "Last Rental Start",
+            "Last Rental End",
+            "Last Renter",
+            "Rental Cost",
+            "Payment Method",
+            "Payment Status",
+            "Last Repair Notes",
+            "Last Repair Date",
+            "Last Mechanic",
+            "Problem Description",
+            "Repair Request Date"
+        ]
         sheet.append(headers)
 
         status_mapping = {
@@ -635,24 +670,63 @@ def generate_report():
             type_name = row[1]
             status = status_mapping.get(str(row[2]), "Unknown")
             inspection_date = row[3].split(" ")[0] if row[3] else "-"
-            rental_start_date = row[4].split(" ")[0] if row[4] else "-"
-            rental_end_date = row[5].split(" ")[0] if row[5] else "Ongoing"
-            user_id = row[6] if row[6] else "-"
-            payment_method = row[7] if row[7] else "-"
-            payment_date = row[8].split(" ")[0] if row[8] else "-"
+            rental_start = row[4].split(" ")[0] if row[4] else "-"
+            rental_end = row[5].split(" ")[0] if row[5] else "Ongoing" if row[4] else "-"
+            renter = row[6] if row[6] else "-"
+            rental_cost = f"${row[7]}" if row[7] else "-"
+            payment_method = row[8] if row[8] else "-"
             payment_status = row[9] if row[9] else "-"
+            repair_notes = row[10] if row[10] else "-"
+            repair_date = row[11].split(" ")[0] if row[11] else "-"
+            mechanic = row[12] if row[12] else "-"
+            problem_desc = row[13] if row[13] else "-"
+            request_date = row[14].split(" ")[0] if row[14] else "-"
 
             sheet.append([
-                inventory_number, type_name, status, inspection_date,
-                rental_start_date, rental_end_date, user_id,
-                payment_method, payment_date, payment_status
+                inventory_number,
+                type_name,
+                status,
+                inspection_date,
+                rental_start,
+                rental_end,
+                renter,
+                rental_cost,
+                payment_method,
+                payment_status,
+                repair_notes,
+                repair_date,
+                mechanic,
+                problem_desc,
+                request_date
             ])
+
+        for column in sheet.columns:
+            max_length = 0
+            column = list(column)
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+
+        for cell in sheet[1]:
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="009879", end_color="009879", fill_type="solid")
+            cell.font = Font(color="FFFFFF", bold=True)
 
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
         workbook.save(temp_file.name)
         temp_file.seek(0)
 
-        return send_file(temp_file.name, as_attachment=True, download_name="bicycle_report.xlsx", mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        return send_file(
+            temp_file.name, 
+            as_attachment=True, 
+            download_name=f"bicycle_report_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx", 
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     except Exception as e:
         print(f"Error generating report: {e}")
         return jsonify({"error": "Failed to generate report"}), 500

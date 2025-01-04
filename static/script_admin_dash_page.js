@@ -99,6 +99,7 @@ function populateUsersTable() {
                     <option value="client" ${user.role === "client" ? 'selected' : ''}>Client</option>
                     <option value="manager" ${user.role === "manager" ? 'selected' : ''}>Manager</option>
                     <option value="admin" ${user.role === "admin" ? 'selected' : ''}>Admin</option>
+                    <option value="mechanic" ${user.role === "mechanic" ? 'selected' : ''}>Mechanic</option>
                 </select>
             </td>
             <td>${user.registration_date ? new Date(user.registration_date).toLocaleDateString() : 'N/A'}</td>

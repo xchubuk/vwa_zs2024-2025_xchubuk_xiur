@@ -204,6 +204,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 case 'admin':
                     dashboardLink = '/admin_dashboard';
                     break;
+                case 'mechanic':
+                    dashboardLink = '/mechanic_dashboard';
+                    break;
                 default:
                     console.warn('User role not recognized.');
             }

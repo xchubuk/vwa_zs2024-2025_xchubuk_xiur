@@ -149,6 +149,13 @@ def admin_dashboard():
         return "Forbidden", 403
     return render_template('admin_dashboard.html')
 
+@app.route('/mechanic_dashboard')
+def mechanic_dashboard():
+    role = fetch_user_role_from_db()
+    if role != 'mechanic':
+        return "Forbidden", 403
+    return render_template('mechanic_dashboard.html')
+
 @app.route('/api/rent', methods=['POST'])
 def rent_bicycle():
     print("Session data:", dict(session))  
@@ -169,22 +176,33 @@ def rent_bicycle():
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO rentals (user_id, bicycle_id, status_at_start, status_at_end, start_date, end_date)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (user_id, bicycle_id, "Available", "In Use", start_date, end_date))
-
+            INSERT INTO rentals (user_id, bicycle_id, start_date, end_date)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, bicycle_id, start_date, end_date))
+        
         rental_id = cursor.lastrowid
 
         cursor.execute('''
-            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
+            INSERT INTO transactions (rental_id, amount, payment_method, payment_date, payment_status)
             VALUES (?, ?, ?, ?, ?)
-        ''', (bicycle_id, start_date, "0", user_id, "Bicycle rented"))
+        ''', (rental_id, hours * 10, payment_type, start_date, "Paid"))
 
-        if payment_type:
-            cursor.execute('''
-                INSERT INTO transactions (rental_id, amount, payment_method, payment_date, payment_status)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (rental_id, hours * 10, payment_type, start_date, "Paid"))
+        transaction_id = cursor.lastrowid
+
+        cursor.execute('''
+            UPDATE rentals 
+            SET transaction_id = ?
+            WHERE rental_id = ?
+        ''', (transaction_id, rental_id))
+
+        cursor.execute('''
+            UPDATE bicycle_status 
+            SET status = '0', 
+                user_id = ?, 
+                comment = ?,
+                inspection_date = ?
+            WHERE bicycle_id = ?
+        ''', (user_id, "Bicycle rented", start_date, bicycle_id))
 
         conn.commit()
         conn.close()
@@ -407,7 +425,7 @@ def update_user_role(user_id):
     data = request.get_json()
     new_role = data.get('role')
 
-    if new_role not in ["client", "manager", "admin"]:
+    if new_role not in ["client", "manager", "admin", "mechanic"]:
         return jsonify({"error": "Invalid role"}), 400
 
     try:
@@ -454,9 +472,10 @@ def update_bicycle_status(bicycle_id):
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
-            VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)
-        ''', (bicycle_id, str(new_status), user_id, comment))
+            UPDATE bicycle_status 
+            SET status = ?, user_id = ?, comment = ?, inspection_date = CURRENT_TIMESTAMP
+            WHERE bicycle_id = ?
+        ''', (str(new_status), user_id, comment, bicycle_id))
 
         conn.commit()
         conn.close()
@@ -695,13 +714,17 @@ def return_bicycle(bicycle_id):
 
             cursor.execute('''
                 INSERT INTO transactions (rental_id, amount, payment_method, payment_date, payment_status)
-                VALUES (?, 0, ?, ?, ?)
-            ''', (rental_id, payment_method, end_date, "Completed"))
+                VALUES (?, ?, ?, ?, ?)
+            ''', (rental_id, 0, payment_method, end_date, "Completed"))
 
         cursor.execute('''
-            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
-            VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)
-        ''', (bicycle_id, '1', user_id, "Bicycle returned by manager"))
+            UPDATE bicycle_status 
+            SET status = '1', 
+                user_id = ?, 
+                comment = ?,
+                inspection_date = CURRENT_TIMESTAMP
+            WHERE bicycle_id = ?
+        ''', (user_id, "Bicycle returned by manager", bicycle_id))
 
         conn.commit()
         conn.close()
@@ -734,9 +757,13 @@ def repair_bicycle(bicycle_id):
         ''', (bicycle_id, manager_id, problem_description, "Pending", False))
 
         cursor.execute('''
-            INSERT INTO bicycle_status (bicycle_id, inspection_date, status, user_id, comment)
-            VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)
-        ''', (bicycle_id, '-1', manager_id, "Bicycle marked for repair"))
+            UPDATE bicycle_status 
+            SET status = '-1', 
+                user_id = ?, 
+                comment = ?,
+                inspection_date = CURRENT_TIMESTAMP
+            WHERE bicycle_id = ?
+        ''', (manager_id, "Bicycle marked for repair", bicycle_id))
 
         conn.commit()
         conn.close()
@@ -745,6 +772,105 @@ def repair_bicycle(bicycle_id):
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to submit repair request"}), 500
+    
+#mechanic rest api calls
+
+@app.route('/api/mechanic/bicycles', methods=['GET'])
+def get_mechanic_bicycles():
+    role = fetch_user_role_from_db()
+    if role != 'mechanic':
+        return abort(403)
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT b.bicycle_id, b.inventory_number, b.type, t.name AS type_name, 
+                   t.description, t.purchase_date, t.type AS bicycle_type,
+                   sr.problem_description, sr.status AS repair_status,
+                   r.completion_date as last_repair_date,
+                   r.repair_notes as last_repair_notes
+            FROM bicycles b
+            JOIN bicycle_types t ON b.type_id = t.type_id
+            JOIN bicycle_status bs ON b.bicycle_id = bs.bicycle_id
+            LEFT JOIN service_requests sr ON b.bicycle_id = sr.bicycle_id
+            LEFT JOIN (
+                SELECT bicycle_id, completion_date, repair_notes
+                FROM repairments
+                WHERE completion_date = (
+                    SELECT MAX(completion_date)
+                    FROM repairments r2
+                    WHERE r2.bicycle_id = repairments.bicycle_id
+                )
+            ) r ON b.bicycle_id = r.bicycle_id
+            WHERE bs.status = '-1'
+            AND bs.status_id = (
+                SELECT MAX(status_id) 
+                FROM bicycle_status 
+                WHERE bicycle_id = b.bicycle_id
+            )
+            AND (sr.status = 'Pending' OR sr.status IS NULL)
+            ORDER BY sr.creation_date DESC
+        ''')
+
+        columns = [column[0] for column in cursor.description]
+        bicycles = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        conn.close()
+        return jsonify(bicycles), 200
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to fetch bicycles"}), 500
+
+@app.route('/api/mechanic/bicycles/<int:bicycle_id>/repair-complete', methods=['POST'])
+def complete_repair(bicycle_id):
+    role = fetch_user_role_from_db()
+    if role != 'mechanic':
+        return abort(403)
+
+    data = request.get_json()
+    repair_notes = data.get('repair_notes')
+    mechanic_id = session.get('user_id')
+
+    if not repair_notes:
+        return jsonify({"error": "Repair notes are required"}), 400
+
+    try:
+        conn = sqlite3.connect('bicycle_rental.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO repairments (completion_date, mechanic_id, bicycle_id, repair_notes)
+            VALUES (CURRENT_TIMESTAMP, ?, ?, ?)
+        ''', (mechanic_id, bicycle_id, repair_notes))
+
+        cursor.execute('''
+            UPDATE service_requests 
+            SET status = 'Completed', 
+                closure_date = CURRENT_TIMESTAMP
+            WHERE bicycle_id = ? 
+            AND status = 'Pending'
+        ''', (bicycle_id,))
+
+        cursor.execute('''
+            UPDATE bicycle_status 
+            SET status = '1', 
+                user_id = ?, 
+                comment = ?,
+                inspection_date = CURRENT_TIMESTAMP
+            WHERE bicycle_id = ?
+        ''', (mechanic_id, f"Repair completed: {repair_notes}", bicycle_id))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "Repair completed successfully"}), 200
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to complete repair"}), 500
     
 #client rest api calls
 

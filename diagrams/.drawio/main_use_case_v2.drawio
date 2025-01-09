@@ -1,28 +1,28 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0" version="24.8.3">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="25.0.3">
   <diagram name="Страница — 1" id="SldNJla6I0VvS7YWMyPq">
-    <mxGraphModel dx="2163" dy="1727" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2901" dy="2301" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-1" value="Nepřihlášený uživatel" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-1" value="Nepřihlášený uživatel" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
           <mxGeometry x="-190" y="260" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-2" value="Přihlášený uživatel" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
-          <mxGeometry x="750" y="30" width="30" height="60" as="geometry" />
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-2" value="Přihlášený uživatel" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="750" y="31" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-3" value="Administrátor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-3" value="Administrátor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
           <mxGeometry x="580" y="-30" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-4" value="Manažer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-4" value="Manažer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
           <mxGeometry x="580" y="240" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-5" value="Zákazník" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-5" value="Zákazník" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
           <mxGeometry x="590" y="480" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="AGU_7dWGJCKcF1EAAkF5-3">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="AGU_7dWGJCKcF1EAAkF5-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="AGU_7dWGJCKcF1EAAkF5-4">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="AGU_7dWGJCKcF1EAAkF5-4" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="680" y="60" />
@@ -30,142 +30,181 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="AGU_7dWGJCKcF1EAAkF5-5">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-5" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="680" y="60" />
               <mxPoint x="680" y="500" />
             </Array>
+            <mxPoint x="750" y="60" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-12" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=23;" vertex="1" parent="1">
-          <mxGeometry x="-80" y="-80" width="590" height="740" as="geometry" />
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-12" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=23;" parent="1" vertex="1">
+          <mxGeometry x="-80" y="-80" width="590" height="1000" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-13" value="Prohlížení dostupných kol" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-13" value="Prohlížení dostupných kol" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="-20" y="400" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-14" value="Registrace" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-14" value="Registrace" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="10" y="160" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-15" value="Přihlášení" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-15" value="Přihlášení" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="10" y="270" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-16" value="Výběr způsobu platby" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-16" value="Výběr způsobu platby" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="330" y="400" width="130" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-17" value="Přidávání a odstraňování kol" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-17" value="Přidávání a odstraňování kol" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="270" y="10" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-18" value="Kontrola kola při vrácení" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-18" value="Kontrola kola při vrácení" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="220" y="330" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-19" value="Rezervace kola" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-19" value="Rezervace kola" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="320" y="480" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-20" value="Vytvoření požadavku na servis" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-20" value="Vytvoření požadavku na servis" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="120" width="130" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-21" value="Prohlížení seznamu kol a jejich stavů" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-21" value="Prohlížení seznamu kol a jejich stavů" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="180" y="180" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-22" value="Generování reportů" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-22" value="Generování reportů" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="370" y="80" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-23" value="Aktualizace stavu kola" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-23" value="Aktualizace stavu kola" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="180" y="260" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-24" value="Přístup k historii transakcí" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-24" value="Přístup k historii transakcí" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="340" y="560" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-26" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.05;entryY=0.358;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-13">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-26" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.05;entryY=0.358;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-13" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-160" y="280" as="sourcePoint" />
             <mxPoint x="-10" y="410" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-27" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-15">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-27" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-15" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-160" y="280" as="sourcePoint" />
             <mxPoint x="430" y="280" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-28" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-14">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-28" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-14" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-160" y="280" as="sourcePoint" />
             <mxPoint x="20" y="240" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-30" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-5" target="AGU_7dWGJCKcF1EAAkF5-13">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-30" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-5" target="AGU_7dWGJCKcF1EAAkF5-13" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="380" y="330" as="sourcePoint" />
             <mxPoint x="430" y="280" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-32" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-19">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-32" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-19" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="500" as="sourcePoint" />
             <mxPoint x="440" y="460" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-33" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-16">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-33" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-16" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="500" as="sourcePoint" />
             <mxPoint x="440" y="460" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-35" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-24">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-35" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-24" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="500" as="sourcePoint" />
             <mxPoint x="550" y="550" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-36" value="Správa uživatelských účtů" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-36" value="Správa uživatelských účtů" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="290" y="-70" width="130" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-4" target="AGU_7dWGJCKcF1EAAkF5-20">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-4" target="AGU_7dWGJCKcF1EAAkF5-20" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="380" y="260" as="sourcePoint" />
             <mxPoint x="430" y="210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-38" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-21">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-38" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-21" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="260" as="sourcePoint" />
             <mxPoint x="430" y="210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-39" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-23">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-39" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-23" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="260" as="sourcePoint" />
             <mxPoint x="430" y="210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-40" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.971;entryY=0.331;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-4" target="AGU_7dWGJCKcF1EAAkF5-18">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-40" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.971;entryY=0.331;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-4" target="AGU_7dWGJCKcF1EAAkF5-18" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="380" y="260" as="sourcePoint" />
             <mxPoint x="430" y="210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-41" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.769;entryY=0.094;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-22">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-41" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.769;entryY=0.094;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-22" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="-10" as="sourcePoint" />
             <mxPoint x="430" y="160" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-42" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="AGU_7dWGJCKcF1EAAkF5-17">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-42" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="AGU_7dWGJCKcF1EAAkF5-17" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="580" y="-10" as="sourcePoint" />
             <mxPoint x="430" y="160" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-43" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.984;entryY=0.682;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-3" target="AGU_7dWGJCKcF1EAAkF5-36">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-43" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.984;entryY=0.682;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="AGU_7dWGJCKcF1EAAkF5-3" target="AGU_7dWGJCKcF1EAAkF5-36" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="420" y="80" as="sourcePoint" />
             <mxPoint x="470" y="30" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="AGU_7dWGJCKcF1EAAkF5-44" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;System&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="AGU_7dWGJCKcF1EAAkF5-44" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;System&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="30" y="-20" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-1" value="Mechanik" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="590" y="720" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AGU_7dWGJCKcF1EAAkF5-2" target="6IpjGQrDWVS02l7ppmFS-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="60" />
+              <mxPoint x="680" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-10" value="Provádění údržby a oprav" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="650" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-11" value="Aktualizace stavu opravy" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="730" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-12" value="Zpracování servisních požadavků" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="810" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-13" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="6IpjGQrDWVS02l7ppmFS-11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="740" as="sourcePoint" />
+            <mxPoint x="450" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-14" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="6IpjGQrDWVS02l7ppmFS-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="740" as="sourcePoint" />
+            <mxPoint x="450" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6IpjGQrDWVS02l7ppmFS-15" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="6IpjGQrDWVS02l7ppmFS-12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="740" as="sourcePoint" />
+            <mxPoint x="560" y="790" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

@@ -35,7 +35,6 @@ async function fetchAndPopulateTable() {
             row.innerHTML = `
                 <td data-label="Inventory Number">${bike.inventory_number}</td>
                 <td data-label="Name">${bike.type_name || ''}</td>
-                <td data-label="Bicycle Type">${bike.bicycle_type || ''}</td>
                 <td data-label="Type">${bike.type}</td>
                 <td data-label="Status" class="${statusClass}">${statusText}</td>
                 <td data-label="Purchase Date">${bike.purchase_date ? new Date(bike.purchase_date).toLocaleDateString() : 'N/A'}</td>

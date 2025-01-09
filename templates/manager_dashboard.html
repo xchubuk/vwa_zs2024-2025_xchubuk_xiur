@@ -23,7 +23,6 @@
                             <th>Inventory Number</th>
                             <th>Name</th>
                             <th>Type</th>
-                            <th>Bicycle Type</th>
                             <th>Status</th>
                             <th>Purchase Date</th>
                             <th>Description</th>
@@ -51,8 +50,8 @@
                 <label for="problemDescription">Problem Description:</label>
                 <textarea id="problemDescription" rows="4" required></textarea>
     
-                <button type="button" onclick="submitRepairRequest()">Submit</button>
-                <button type="button" onclick="closeRepairForm()">Cancel</button>
+                <button type="button" class="button-repair" onclick="submitRepairRequest()">Submit</button>
+                <button type="button" class="button-return" onclick="closeRepairForm()">Cancel</button>
             </form>
         </div>
     </div>

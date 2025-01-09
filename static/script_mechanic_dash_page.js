@@ -7,9 +7,8 @@ function goToMainPage() {
 async function fetchAndPopulateTable() {
     try {
         const response = await fetch('/api/mechanic/bicycles');
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error('Failed to fetch bicycles');
-        }
 
         const bicycles = await response.json();
         const tableBody = document.querySelector('#bicycleTable tbody');
@@ -67,9 +66,8 @@ async function submitRepairCompletion() {
             })
         });
 
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error('Failed to complete repair');
-        }
 
         closeRepairForm();
         fetchAndPopulateTable();

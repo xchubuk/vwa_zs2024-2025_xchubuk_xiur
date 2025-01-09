@@ -51,9 +51,8 @@ function renderBikes(bicycles) {
             </div>
         `;
 
-        if (bike.status === "1") { 
+        if (bike.status === "1")
             card.addEventListener('click', () => openModal(bike));
-        }
 
         gallery.appendChild(card);
     });
@@ -65,9 +64,8 @@ document.querySelector('.close-modal').addEventListener('click', () => {
 
 window.addEventListener('click', (e) => {
     const modal = document.getElementById('rental-modal');
-    if (e.target === modal) {
+    if (e.target === modal)
         modal.style.display = 'none';
-    }
 });
 
 document.querySelectorAll('.time-option').forEach(option => {
@@ -88,11 +86,9 @@ document.getElementById('logout-button').addEventListener('click', async () => {
             method: 'GET'
         });
 
-        console.log(response.ok)
-
-        if (response.ok) {
+        if (response.ok)
             location.href = '/';
-        }
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -152,9 +148,7 @@ async function fetchTypes() {
                 option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
                 typeFilter.appendChild(option);
             });
-        } else {
-            console.error('Failed to fetch types');
-        }
+        } else console.error('Failed to fetch types');
     } catch (error) {
         console.error('Error:', error);
     }
@@ -217,9 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     location.href = dashboardLink;
                 });
             }
-        } else {
-            console.error("Failed to retrieve user role.");
-        }
+        } else console.error("Failed to retrieve user role.");
     } catch (error) {
         console.error("Error fetching user role:", error);
     }

@@ -1,15 +1,14 @@
 let selectedBicycleId = null;
 
-function goToMainPage() {
-    location.href = '/index';
+const goToMainPage = () => {
+    location.href = "/index";
 }
 
 async function fetchAndPopulateTable() {
     try {
         const response = await fetch('/api/admin/bicycles');
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error('Failed to fetch bicycles');
-        }
 
         const bicycles = await response.json();
 
@@ -68,9 +67,8 @@ async function returnBicycle(bicycleId) {
             })
         });
 
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error('Failed to return bicycle');
-        }
 
         alert('Bicycle returned successfully.');
         fetchAndPopulateTable();
@@ -99,9 +97,8 @@ async function submitRepairRequest() {
             })
         });
 
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error('Failed to submit repair request');
-        }
 
         closeRepairForm();
         fetchAndPopulateTable();
@@ -128,9 +125,8 @@ closeBtn.onclick = function () {
 }
 
 window.onclick = function (event) {
-    if (event.target == modal) {
+    if (event.target == modal)
         modal.style.display = 'none';
-    }
 }
 
 document.getElementById('repairForm').onsubmit = function (e) {

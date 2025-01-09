@@ -1,9 +1,9 @@
 async function fetchRentalHistory() {
     try {
         const response = await fetch('/api/client/rental_history');
-        if (!response.ok) {
+        
+        if (!response.ok)
             throw new Error('Failed to fetch rental history');
-        }
 
         const rentals = await response.json();
         const tableBody = document.getElementById('rentalTableBody');

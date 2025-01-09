@@ -14,11 +14,11 @@ function switchTab(tab) {
     document.querySelectorAll('form').forEach(form => {
         form.classList.remove('active');
     });
-    if (tab === 'login') {
+
+    if (tab === 'login')
         document.getElementById('loginForm').classList.add('active');
-    } else {
+    else
         document.getElementById('registerForm').classList.add('active');
-    }
 }
 
 async function handleLogin(event) {
